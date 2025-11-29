@@ -122,8 +122,8 @@ extern "C" {
 #define CFG_TUD_MIDI_TX_BUFSIZE 0
 
 // Vendor FIFO size of TX and RX
-#define CFG_TUD_VENDOR_RX_BUFSIZE 3600
-#define CFG_TUD_VENDOR_TX_BUFSIZE 3600
+#define CFG_TUD_VENDOR_RX_BUFSIZE 8184
+#define CFG_TUD_VENDOR_TX_BUFSIZE 256
 
 //--------------------------------------------------------------------
 // Host Configuration

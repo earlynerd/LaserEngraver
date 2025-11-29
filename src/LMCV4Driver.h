@@ -33,15 +33,19 @@ protected:
     virtual void hw_setPower(uint16_t power) = 0;
     virtual void hw_setFrequency(uint16_t period) = 0;
     virtual void hw_setSpeed(uint16_t speed) = 0;
-
+    virtual void hw_getPos(uint16_t& live_x, uint16_t& live_y) = 0;
+    virtual uint16_t hw_getInputs() = 0;
     struct State {
         uint16_t x = 0x8000;
         uint16_t y = 0x8000;
         bool is_ready = true;
         bool is_running = false;
+        bool laser_on = false;
+        bool mark_on = false;
+        uint16_t port;
     } state;
 
-
+    uint8_t _buf[5000];
     // Replaced non-existent Endpoint class with raw addresses
     // We will use tud_vendor_read/write() in the implementation
     uint8_t _ep_out;
