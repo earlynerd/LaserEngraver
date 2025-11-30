@@ -4,11 +4,14 @@
 #include <Adafruit_TinyUSB.h>
 #include "LMCV4_Protocol.h"
 #include "RingBuffer.h"
+#include "XY2Galvo.h"
+
+#define CHUNK_SIZE  3100
 
 class LMCV4Driver : public Adafruit_USBD_Interface {
 public:
     LMCV4Driver();
-    void begin();
+    void begin(XY2Galvo* galvo, LaserQueue* queue);
     
     // Call this in the main loop as fast as possible
     // Handles USB I/O and parsing
@@ -25,13 +28,13 @@ public:
 
 protected:
     // Hardware Abstraction Layer (Override these in main.cpp)
-    virtual void hw_travel(uint16_t x, uint16_t y) = 0;
-    virtual void hw_cut(uint16_t x, uint16_t y) = 0;
-    virtual void hw_laserControl(bool on) = 0;
-    virtual void hw_setPower(uint16_t power) = 0;
-    virtual void hw_setFrequency(uint16_t period) = 0;
-    virtual void hw_setSpeed(uint16_t speed) = 0;
-    virtual void hw_getPos(uint16_t& live_x, uint16_t& live_y) = 0;
+    virtual void hw_travel(uint16_t x, uint16_t y, XY2Galvo* galvo) = 0;
+    virtual void hw_cut(uint16_t x, uint16_t y,  XY2Galvo* galvo) = 0;
+    virtual void hw_laserControl(bool on,  XY2Galvo* galvo) = 0;
+    virtual void hw_setPower(uint16_t power,  XY2Galvo* galvo) = 0;
+    virtual void hw_setFrequency(uint16_t period,  XY2Galvo* galvo) = 0;
+    virtual void hw_setSpeed(uint16_t speed,  XY2Galvo* galvo) = 0;
+    virtual void hw_getPos(uint16_t& live_x, uint16_t& live_y,  XY2Galvo* galvo) = 0;
     virtual uint16_t hw_getInputs() = 0;
 
     // Internal Machine State
@@ -54,14 +57,15 @@ protected:
         uint16_t laser_on_delay = 0;
         uint16_t laser_off_delay = 0;
     } state;
-
+    XY2Galvo* _galvo;
+    LaserQueue* _queue;
     // USB Buffers
     uint8_t _rx_buf_temp[4096]; // Temporary buffer for Raw USB read
-    RingBuffer<uint8_t, 16384> _usbStreamBuffer; // Buffer to re-assemble stream into 12-byte cmds
+    RingBuffer<uint8_t, 4096> _usbStreamBuffer; // Buffer to re-assemble stream into 12-byte cmds
 
   
     // Stores parsed commands waiting to be executed by hardware
-    RingBuffer<BalorCommand, 512> _jobQueue; 
+    RingBuffer<BalorCommand, 2048> _jobQueue; 
 
     // TinyUSB Handles
     uint8_t _ep_out;
