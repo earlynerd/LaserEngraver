@@ -220,7 +220,8 @@ void LMCV4Driver::handleSystemCommand(const BalorCommand& cmd) {
             state.is_running = false;
             _jobQueue.clear();
             _usbStreamBuffer.clear();
-            while(_queue->avail()) _queue->pop();
+            //while(_queue->avail()) _queue->pop();
+            hw_abort(_galvo);
             hw_laserControl(false, _galvo);
             break;
             
@@ -271,8 +272,11 @@ void LMCV4Driver::executeCommand(const BalorCommand& cmd) {
             break;
 
         case 0x800C: // Cut Speed
+            hw_setMarkSpeed((float)cmd.params[0] * 1.9656, _galvo);
+            break;
+
         case 0x8006: // Jump Speed
-            hw_setSpeed(cmd.params[0], _galvo);
+            hw_setJumpSpeed((float)cmd.params[0] * 1.9656, _galvo);
             break;
             
         case 0x8002: // End of List marker

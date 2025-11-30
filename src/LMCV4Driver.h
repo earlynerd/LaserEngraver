@@ -33,8 +33,10 @@ protected:
     virtual void hw_laserControl(bool on,  XY2Galvo* galvo) = 0;
     virtual void hw_setPower(uint16_t power,  XY2Galvo* galvo) = 0;
     virtual void hw_setFrequency(uint16_t period,  XY2Galvo* galvo) = 0;
-    virtual void hw_setSpeed(uint16_t speed,  XY2Galvo* galvo) = 0;
+    virtual void hw_setMarkSpeed(float speed,  XY2Galvo* galvo) = 0;
+    virtual void hw_setJumpSpeed(float speed,  XY2Galvo* galvo) = 0;
     virtual void hw_getPos(uint16_t& live_x, uint16_t& live_y,  XY2Galvo* galvo) = 0;
+    virtual void hw_abort(XY2Galvo *galvo) = 0;
     virtual uint16_t hw_getInputs() = 0;
 
     // Internal Machine State
