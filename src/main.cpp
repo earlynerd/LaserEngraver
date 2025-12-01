@@ -16,7 +16,7 @@ private:
     size_t _shadowHead = 0;
     const float SPEED_FACTOR = GALVO_RANGE / (FIELD_SIZE_MM * UPDATE_RATE_HZ);
     // 2. Current State (Pending changes from USB)
-    LaserSet _pendingMarkSettings = laser_set[1];    // Holds current power, freq, mark speed for marking
+    LaserSet _pendingMarkSettings = laser_set[2];    // Holds current power, freq, mark speed for marking
     LaserSet _pendingJumpSettings = laser_set[0];    // Holds current power, freq, mark speed for jumps
     
     LaserSet *commitLaserSet(bool is_marking)
@@ -68,7 +68,9 @@ protected:
 
     void hw_setPower(uint16_t power, XY2Galvo *galvo) override
     {
-        // Serial1.printf("Power: %d\r\n", power);
+        uint pattern = 0x03ff >> map(power, 0, 4095, 10, 0);
+        _pendingMarkSettings.pattern = pattern;        
+        //Serial1.printf("Power: %d\r\n", power);
     }
 
     void hw_setFrequency(uint16_t period, XY2Galvo *galvo) override {}
@@ -100,6 +102,25 @@ protected:
         _shadowHead = 0;
         galvo->requestAbort();
     }  
+    void hw_setPulseWidth(uint16_t us)override {
+        state.pulseWidth = us;
+    }
+    void hw_setLaserOnDelay(uint16_t us)override{
+        state.laser_on_delay = us;
+        _pendingMarkSettings.delay_a = us/10;
+    }
+    void hw_setLaserOffDelay(uint16_t us)override{
+        state.laser_off_delay = us;
+        _pendingMarkSettings.delay_e = us/10;
+    }
+    void hw_setEndDelay(uint16_t us) override{
+        state.end_delay = us;
+        
+    }
+    void hw_setPolygonDelay(uint16_t us)override{
+        state.poly_delay = us;
+        _pendingMarkSettings.delay_m = us/10;
+    }
 };
 
 RP2350Laser machine;

@@ -37,6 +37,11 @@ protected:
     virtual void hw_setJumpSpeed(float speed,  XY2Galvo* galvo) = 0;
     virtual void hw_getPos(uint16_t& live_x, uint16_t& live_y,  XY2Galvo* galvo) = 0;
     virtual void hw_abort(XY2Galvo *galvo) = 0;
+    virtual void hw_setPulseWidth(uint16_t us) = 0;
+    virtual void hw_setLaserOnDelay(uint16_t us) = 0;
+    virtual void hw_setLaserOffDelay(uint16_t us) = 0;
+    virtual void hw_setEndDelay(uint16_t us) = 0;
+    virtual void hw_setPolygonDelay(uint16_t us) = 0;
     virtual uint16_t hw_getInputs() = 0;
 
     // Internal Machine State
@@ -58,6 +63,8 @@ protected:
         uint16_t poly_delay = 0;
         uint16_t laser_on_delay = 0;
         uint16_t laser_off_delay = 0;
+        uint16_t end_delay = 0;
+        uint16_t pulseWidth = 30;
     } state;
     XY2Galvo* _galvo;
     LaserQueue* _queue;

@@ -283,16 +283,32 @@ void LMCV4Driver::executeCommand(const BalorCommand& cmd) {
             // This is often a NOP in execution, just marks end of a segment
             state.is_running = 0;
             break;
-            
-        // Delays - In a real machine, these would block the 'run' loop non-blocking
-        // using millis() or micros(). For simplicity here, we might just wait.
+        case 0x8004:        //set mark end delay
+            hw_setEndDelay(cmd.params[0]);
+
+        break;    
+        case 0x800F:           //set polygon delay
+            hw_setPolygonDelay(cmd.params[0]);
+        break;
         case 0x800D: // Jump Delay
-            state.jump_delay = cmd.params[0];
-            delayMicroseconds(state.jump_delay * 10); // Params often 10us units
+            //state.jump_delay = cmd.params[0];
+            
+            //delayMicroseconds(state.jump_delay * 10); // Params often 10us units
             break;
         case 0x8007: // Laser On Delay
-             state.laser_on_delay = cmd.params[0];
+            hw_setLaserOnDelay(cmd.params[0]);
+             //state.laser_on_delay = cmd.params[0];
              break;
+
+        case 0x8008:        //set laser off delay
+            hw_setLaserOffDelay(cmd.params[0]);
+        break;
+
+        case 0x8026:        //set pulse width
+        break;
+
+        case 0x8051:        //start job?
+        break;
     }
 }
 
